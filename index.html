@@ -6,29 +6,49 @@
   <title>AI Gemini Project</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div id="result">Loading...</div>
-  
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
+    <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">JAAI (Jatim AI)</h1>
+    
+    <div class="flex mb-4">
+      <input 
+        type="text" 
+        id="query" 
+        placeholder="Tulis pertanyaan..."
+        class="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+      <button 
+        onclick="main()"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-r-lg font-medium transition-colors"
+      >
+        Kirim
+      </button>
+    </div>
+    
+    <div class="bg-gray-50 rounded-lg border border-gray-200 p-4 min-h-[200px]">
+      <h2 class="font-semibold text-gray-700 mb-2">Jawaban:</h2>
+      <div id="result" class="text-gray-700">
+        Pertanyaan Anda akan muncul di sini...
+      </div>
+    </div>
+    
+    <div class="mt-4 text-center text-sm text-gray-500">
+      Model: Gemini 2.0 Flash
+    </div>
+  </div>
+
   <script>
     const main = async() =>  {
-      const API_KEY;
+      const API_KEY = "AIzaSyDkhi3pQoZqRTd-vIs5MOQpJcTkgMeoJ6o"
       const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`
-      const res = await fetch(ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: "apa itu mobil" }]
-          }]
-        })
-      })
+      let prompt = document.getElementById("query").value
+      
+      const res = await fetch("api/getData.js")
       const data = await res.json()
       
       const responseText = data.candidates[0].content.parts[0].text
-      document.getElementById("result").innerText = responseText
+      document.getElementById("result").textContent = responseText
     }
-    
-    // main()
   </script>
 </body>
 </html>
