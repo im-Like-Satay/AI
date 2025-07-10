@@ -1,55 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini API Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Gemini Project</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <h1>Gemini API Demo</h1>
-    <textarea id="input" placeholder="Tulis pertanyaan Anda di sini..."></textarea>
-    <button id="submit">Kirim</button>
-    <div id="output"></div>
-
-    <script>
-        // Ganti dengan API key Anda
-        const API_KEY = 'AIzaSyDkhi3pQoZqRTd-vIs5MOQpJcTkgMeoJ6o';
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
-
-        document.getElementById('submit').addEventListener('click', async () => {
-            const input = document.getElementById('input').value;
-            const outputDiv = document.getElementById('output');
-            
-            if (!input) {
-                alert('Silakan masukkan pertanyaan!');
-                return;
-            }
-
-            outputDiv.innerHTML = 'Memproses...';
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: input
-                            }]
-                        }]
-                    })
-                });
-
-                const data = await response.json();
-                const generatedText = data.candidates[0].content.parts[0].text;
-                outputDiv.innerHTML = generatedText;
-            } catch (error) {
-                console.error('Error:', error);
-                outputDiv.innerHTML = 'Terjadi kesalahan: ' + error.message;
-            }
-        });
-    </script>
+  <div id="result">Loading...</div>
+  
+  <script>
+    const main = async() =>  {
+      const API_KEY = "AIzaSyDkhi3pQoZqRTd-vIs5MOQpJcTkgMeoJ6o"
+      const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: "apa itu mobil" }]
+          }]
+        })
+      })
+      const data = await res.json()
+      
+      const responseText = data.candidates[0].content.parts[0].text
+      document.getElementById("result").innerText = responseText
+    }
+    
+    // main()
+  </script>
 </body>
 </html>
