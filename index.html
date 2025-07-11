@@ -43,7 +43,15 @@
       const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`
       let prompt = document.getElementById("query").value
       
-      const res = await fetch("api/getData.js")
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: prompt }]
+          }]
+        })
+      })
       const data = await res.json()
       
       const responseText = data.candidates[0].content.parts[0].text
