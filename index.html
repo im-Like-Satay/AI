@@ -1,81 +1,103 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Gemini Project</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Custom scrollbar for result box */
-    #result::-webkit-scrollbar {
-      width: 6px;
-    }
-    #result::-webkit-scrollbar-thumb {
-      background-color: rgba(156, 163, 175, 0.5);
-      border-radius: 3px;
-    }
-  </style>
-</head>
-<body class="bg-gray-50 min-h-screen">
-  <div class="container mx-auto px-4 py-8 max-w-3xl">
-    
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-blue-600 mb-2">MarGPT AI Chat</h1>
-      <p class="text-gray-600">Tanya apa saja ke AI MarGPT</p>
-    </div>
-    
-    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Gemini Project</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      #result::-webkit-scrollbar {
+        width: 6px;
+      }
+      #result::-webkit-scrollbar-thumb {
+        background-color: rgba(156, 163, 175, 0.5);
+        border-radius: 3px;
+      }
+      .loader {
+        border-top-color: #3b82f6;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
       
-      <div class="p-4 border-b border-gray-200">
-        <div class="flex flex-col sm:flex-row gap-2">
-          <input
-            type="text"
-            id="query"
-            placeholder="Ketik pertanyaan Anda..."
-            class="flex-grow px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-          <button
-            onclick="main()"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors whitespace-nowrap"
-          >
-            Kirim
-          </button>
-        </div>
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-blue-600 mb-2">MarGPT AI Chat</h1>
+        <p class="text-gray-600">Tanya apa saja ke AI MarGPT</p>
       </div>
       
-      <div class="p-4">
-        <div id="result" class="min-h-[200px] max-h-[60vh] overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-700">
-          Pertanyaan Anda akan muncul di sini...
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        
+        <div class="p-4 border-b border-gray-200">
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input
+              type="text"
+              id="query"
+              placeholder="Ketik pertanyaan Anda..."
+              class="flex-grow px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+            <button
+              onclick="main()"
+              id="submit-btn"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors whitespace-nowrap"
+            >
+              Kirim
+            </button>
+          </div>
+        </div>
+        
+        <div class="p-4">
+          <div id="result" class="min-h-[200px] max-h-[60vh] overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-700">
+            Pertanyaan Anda akan muncul di sini...
+          </div>
         </div>
       </div>
+  
+      <div class="mt-6 text-center text-sm text-gray-500">
+        Menggunakan model Gemini 2.0 Flash
+      </div>
     </div>
-
-    <div class="mt-6 text-center text-sm text-gray-500">
-      Menggunakan model Gemini 2.0 Flash
-    </div>
-  </div>
-
-  <script>
-    const main = async() =>  {
-      const API_KEY = "AIzaSyDkhi3pQoZqRTd-vIs5MOQpJcTkgMeoJ6o"
-      const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`
-      let prompt = document.getElementById("query").value
-      
-      const res = await fetch(ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }]
+  
+    <script>
+      const main = async () => {
+        const API_KEY = "AIzaSyDkhi3pQoZqRTd-vIs5MOQpJcTkgMeoJ6o"
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`
+        let prompt = document.getElementById("query").value
+        
+        const resultDiv = document.getElementById("result");
+        const submitBtn = document.getElementById("submit-btn");
+        resultDiv.innerHTML = `
+          <div class="flex justify-center items-center h-40">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+          </div>`
+        
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{ text: prompt }]
+            }]
+          })
         })
-      })
-      const data = await res.json()
+        
+        const data = await res.json()
+        const responseText = data.candidates[0].content.parts[0].text
+        const cleanedText = responseText.split('**').join('')
+        document.getElementById("result").innerHTML = `<div class="prose">${cleanedText}</div>`
+      };
       
-      console.table(data)
-      const responseText = data.candidates[0].content.parts[0].text
-      document.getElementById("result").innerHTML = `<h3>${responseText}</h3>`
-    }
-  </script>
-</body>
+      document.getElementById("query").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault()
+          main()
+        }
+      })
+    </script>
+  </body>
 </html>
