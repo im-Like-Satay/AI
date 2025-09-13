@@ -1,9 +1,9 @@
 name: Keep Alive
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/30 * * * *'
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - run: curl -s "https://huggingface.co/spaces/username/your-space-name" > /dev/null
+      - run: curl -s "https://sldev123-n8n.hf.space" > /dev/null
