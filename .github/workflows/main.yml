@@ -6,4 +6,8 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - run: curl -s "https://sldev123-n8n.hf.space" > /dev/null
+      - name: Ping n8n
+        run: curl -s "https://sldev123-n8n.hf.space" > /dev/null
+      
+      - name: Ping Spiderfoot
+        run: curl -s "https://sldev123-spiderfoot.hf.space/" > /dev/null
